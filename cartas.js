@@ -4,8 +4,8 @@ function calcularPontuacao(mao) {
 
   // +1 ponto para cada carta de mesmo naipe
   const naipes = {};
-  mao.forEach(cart => {
-    naipes[cart.naipe] = (naipes[cart.naipe] || 0) + 1;
+  mao.forEach(carta => {
+    naipes[carta.naipe] = (naipes[carta.naipe] || 0) + 1;
   });
 
   for (const naipe in naipes) {
@@ -32,7 +32,6 @@ function calcularPontuacao(mao) {
 
   return pontuacao;
 }
-
 
 // Função para encontrar o melhor trio com a maior pontuação
 function encontrarMelhorTrio(cartas) {
@@ -98,10 +97,7 @@ function embaralharBaralho(baralho) {
 
 // Função para distribuir cartas para os jogadores e cartas da mesa
 function distribuirCartas(baralho, numJogadores) {
-  const maos = [];
-  for (let i = 0; i < numJogadores; i++) {
-    maos.push([]);
-  }
+  const maos = Array.from({ length: numJogadores }, () => []);
 
   // Distribuir 3 cartas para cada jogador
   for (let i = 0; i < 3; i++) {
@@ -118,7 +114,8 @@ function distribuirCartas(baralho, numJogadores) {
 
 // Função para exibir cartas de cada jogador
 function exibirCartas(jogador, cartas) {
-  console.log(`Jogador ${jogador} - Cartas:`, cartas);
+  console.log(`Jogador ${jogador} - Cartas:`);
+  cartas.forEach(carta => console.log(`  ${carta.naipe} ${carta.valor}`));
 }
 
 // Execução do código
@@ -128,63 +125,33 @@ embaralharBaralho(baralho);
 const numJogadores = 4;
 const { maos, mesa } = distribuirCartas(baralho, numJogadores);
 
+// Exibir cartas iniciais dos jogadores
 for (let i = 0; i < numJogadores; i++) {
   exibirCartas(i + 1, maos[i]);
 }
 
-console.log("\nCartas na mesa:", mesa);
+// Exibir cartas na mesa
+console.log('\n--- Cartas na Mesa ---');
+exibirCartas('Mesa', mesa);
 
-// Execução do código
+// Calcular e exibir pontuações dos jogadores
+console.log('\n--- Pontuações dos Jogadores ---');
 const pontuacoes = maos.map(mao => calcularPontuacao(mao));
-console.log("\nPontuações dos Jogadores:", pontuacoes);
+pontuacoes.forEach((pontuacao, index) => {
+  console.log(`Jogador ${index + 1}: ${pontuacao} ponto(s)`);
+});
 
+// Exibir rodada final
+console.log('\n--- Rodada Final ---');
 for (let i = 0; i < numJogadores; i++) {
-  const { melhorTrio, melhorPontuacao } = encontrarMelhorTrio(maos[i]);
-  console.log(`\nMelhor Trio para Jogador ${i + 1}:`, melhorTrio);
-  console.log(`Pontuação do Melhor Trio para Jogador ${i + 1}:`, melhorPontuacao);
+  console.log(`\n--- Jogador ${i + 1} ---`);
+  const { melhorTrio, melhorPontuacao } = encontrarMelhorTrio([...maos[i], ...mesa]);
+
+  // Exibir a mão completa do jogador na rodada final
+  exibirCartas(i + 1, [...maos[i], ...mesa]);
+
+  // Exibir o melhor trio possível e sua pontuação
+  console.log('\nMelhor Trio:');
+  melhorTrio.forEach(cart => console.log(`  ${cart.naipe} ${cart.valor}`));
+  console.log(`Pontuação do Melhor Trio: ${melhorPontuacao}\n`);
 }
-
-// Função para realizar a rodada final
-function rodadaFinal(baralho, maos, mesa) {
-  for (let i = 0; i < maos.length; i++) {
-    // Adicionar 2 cartas à mão do jogador na rodada final
-    maos[i] = maos[i].concat(mesa, [baralho.pop(), baralho.pop()]);
-  }
-}
-
-// Função principal para simular o jogo
-function simularJogo() {
-  const baralho = criarBaralho();
-  embaralharBaralho(baralho);
-
-  const numJogadores = 4;
-  const { maos, mesa } = distribuirCartas(baralho, numJogadores);
-
-  for (let i = 0; i < numJogadores; i++) {
-    console.log("\n--- Rodada Inicial ---");
-    exibirCartas(i + 1, maos[i]);
-  }
-
-  rodadaFinal(baralho, maos, mesa);
-
-  for (let i = 0; i < numJogadores; i++) {
-    console.log("\n--- Rodada Final ---");
-    const { melhorTrio, melhorPontuacao } = encontrarMelhorTrio(maos[i]);
-    exibirCartasETrio(i + 1, maos[i], { melhorTrio, melhorPontuacao });
-  }
-}
-
-// Função para exibir cartas de cada jogador
-function exibirCartas(jogador, cartas) {
-  console.log(`Jogador ${jogador} - Cartas:`, cartas);
-}
-
-// Função para exibir cartas e o melhor trio de um jogador
-function exibirCartasETrio(jogador, cartas, { melhorTrio, melhorPontuacao }) {
-  console.log(`Jogador ${jogador} - Cartas:`, cartas);
-  console.log(`Melhor Trio:`, melhorTrio);
-  console.log(`Pontuação do Melhor Trio:`, melhorPontuacao);
-}
-
-// Executar a simulação do jogo
-simularJogo();
