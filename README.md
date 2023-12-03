@@ -1,5 +1,5 @@
 # COMO RODAR.
 
 tenha o NODE instalado. 
-no terminal BASH 
-# digite NODE cartas.js
+1. no terminal BASH 
+2. digite NODE cartas.js
