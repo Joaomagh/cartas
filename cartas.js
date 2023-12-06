@@ -33,7 +33,7 @@ function calcularPontuacao(mao) {
   return pontuacao;
 }
 
-// Função para encontrar o melhor trio com a maior pontuação
+// Função para encontrar o melho trio com a maior pontuação
 function encontrarMelhorTrio(cartas) {
   let melhorPontuacao = 0;
   let melhorTrio = [];
